@@ -11,14 +11,16 @@ using System.Windows.Shapes;
 
 namespace CustomVigenereCypher
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+    public partial class VigenereMain : Window
     {
-        public MainWindow()
+        public VigenereMain()
         {
             InitializeComponent();
+        }
+
+        private void ResultingMessage_Initialized(object sender, EventArgs e)
+        {
+            ResultingMessage.IsReadOnly = true;
         }
     }
 }
