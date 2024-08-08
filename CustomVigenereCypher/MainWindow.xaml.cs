@@ -14,6 +14,8 @@ namespace CustomVigenereCypher
     public partial class VigenereMain : Window
     {
         bool converterState = true;
+        string tempKey = "asdf";
+        static char[] tempMatrixCore = ("abcdefghijklmnopqrstuvwxyz").ToCharArray();
 
         public VigenereMain()
         {
@@ -55,9 +57,47 @@ namespace CustomVigenereCypher
                 EnterMessageTextBox.Watermark = "Please enter a message";
                 return;
             }
-            ResultingMessageTextBox.Text = EnterMessageTextBox.Text;
+            if (converterState)
+            {
+                char[][] matrix = FormMatrix(tempMatrixCore);
+                ResultingMessageTextBox.Text = new string(matrix[1]); // Encrypt(EnterMessageTextBox.Text, tempKey);
+            }
+            if (!converterState)
+            {
+                ResultingMessageTextBox.Text = Decrypt(EnterMessageTextBox.Text, tempKey);
+            }
             EnterMessageTextBox.Text = string.Empty;
             EnterMessageTextBox.Watermark = string.Empty;
+        }
+
+        public static char[][] FormMatrix(char[] core)
+        {
+            char[][] matrix = new char[core.Length][];
+            char buffer;
+            for (int i = 0; i < core.Length; i++)
+            {
+                matrix[i] = (char[])core.Clone();
+                buffer = core[0];
+                Array.Copy(core, 1, core, 0, core.Length - 1);
+                core[core.Length - 1] = buffer;
+            }
+
+            return matrix;
+        }
+
+
+        public static string Encrypt(string plaintext, string key)
+        {
+            string result = string.Empty;
+
+            return result;
+        }
+
+        public static string Decrypt(string ciphertext, string key)
+        {
+            string result = string.Empty;
+
+            return result;
         }
     }
 }
