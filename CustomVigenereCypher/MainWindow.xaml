@@ -11,29 +11,29 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <xctk:WatermarkTextBox Watermark="Enter your message here" HorizontalAlignment="Left" Margin="60,67,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Height="150" Background="#FF3671B0" Foreground="White" FontFamily="Arial">
+        <xctk:WatermarkTextBox x:Name="EnterMessageTextBox" Watermark="Enter your message here" Margin="462,30,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Height="120" Background="#FF3671B0" Foreground="White" FontFamily="Arial" HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" Padding="5,5,5,5" Grid.IsSharedSizeScope="True">
             <xctk:WatermarkTextBox.WatermarkTemplate>
                 <DataTemplate>
                     <ContentControl Content="{Binding}" FontFamily="Arial" Foreground="White" FontWeight="Bold" Focusable="False" />
                 </DataTemplate>
             </xctk:WatermarkTextBox.WatermarkTemplate>
         </xctk:WatermarkTextBox>
-        <Label Content="MESSAGE TO ENCRYPT" VerticalAlignment="Top" Foreground="White" FontFamily="Arial" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="123,31,0,0"/>
-        <TextBox x:Name="ResultingMessage" HorizontalAlignment="Left" Margin="440,67,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Height="150" Initialized="ResultingMessage_Initialized" Cursor="Arrow" Background="#FF3671B0"/>
-        <Button Content="Switch to Decrypter" HorizontalAlignment="Center" Margin="0,316,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="14" FontWeight="Bold" BorderBrush="Black" Foreground="White" Background="#FF3671B0" Padding="10" BorderThickness="0,0,0,0" Cursor="Hand" RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False" HorizontalContentAlignment="Center" MaxWidth="200" MaxHeight="50">
+        <Label x:Name="EnterMessageLabel" Content="MESSAGE TO ENCRYPT" VerticalAlignment="Top" Foreground="White" FontFamily="Arial" FontWeight="Bold" FontSize="9" HorizontalAlignment="Left" Margin="462,10,0,0"/>
+        <TextBox x:Name="ResultingMessageTextBox" HorizontalAlignment="Left" Margin="462,240,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" Height="120" Initialized="ResultingMessageTextBox_Initialized" Cursor="Arrow" Background="#FF3671B0" Foreground="White" FontFamily="Arial" Padding="5,5,5,5"/>
+        <Button x:Name="SwapButton" Content="Swap" HorizontalAlignment="Left" Margin="705,170,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="14" FontWeight="Bold" BorderBrush="Black" Foreground="White" Background="#FF3671B0" Padding="10" BorderThickness="0,0,0,0" Cursor="Hand" RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False" HorizontalContentAlignment="Center" MaxWidth="200" MaxHeight="50" Click="SwapButton_Click">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
                 </Style>
             </Button.Resources>
         </Button>
-        <Button x:Name="ConverterButton" Content="Encrypt" HorizontalAlignment="Center" Margin="0,260,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="14" FontWeight="Bold" BorderBrush="Black" Foreground="White" Background="#FF3671B0" Padding="10" BorderThickness="0,0,0,0" Cursor="Hand" ClickMode="Hover">
+        <Button x:Name="ConverterButton" Content="Encrypt" HorizontalAlignment="Left" Margin="561,170,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="14" FontWeight="Bold" BorderBrush="Black" Foreground="White" Background="#FF3671B0" Padding="10" BorderThickness="0,0,0,0" Cursor="Hand" Width="94" Click="ConverterButton_Click">
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius" Value="10"/>
                 </Style>
             </Button.Resources>
         </Button>
-        <Label Content="RESULTING MESSAGE" VerticalAlignment="Top" Foreground="White" FontFamily="Arial" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="508,31,0,0"/>
+        <Label x:Name="ResultingMessageLabel" Content="RESULTING MESSAGE" VerticalAlignment="Top" Foreground="White" FontFamily="Arial" FontSize="9" HorizontalAlignment="Left" Margin="462,220,0,0" FontWeight="Bold"/>
     </Grid>
 </Window>
