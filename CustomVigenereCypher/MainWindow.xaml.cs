@@ -14,16 +14,17 @@ namespace CustomVigenereCypher
     public partial class VigenereMain : Window
     {
         bool converterState = true;
-        string defaultKey = "asdf";
-        string defaultAlphabet = "abcdefghijklmnopqrstuvwxyz";
-        Dictionary<char, int> charToIntMap = new Dictionary<char, int>();
-        Dictionary<int, char> intToCharMap = new Dictionary<int, char>();
+        static string defaultKey = "asdf";
+        static string defaultAlphabet = "abcdefghijklmnopqrstuvwxyz";
+        static Dictionary<char, int> charToIndex = new Dictionary<char, int>();
+        static Dictionary<int, char> indexToChar = new Dictionary<int, char>();
+        static int alphabetLength = defaultAlphabet.Length;
 
         public VigenereMain()
         {
             InitializeComponent();
-            charToIntMap = CreateCharToIndexMap(defaultAlphabet);
-            intToCharMap = CreateIndexToCharMap(defaultAlphabet);
+            charToIndex = CreateCharToIndexMap(defaultAlphabet);
+            indexToChar = CreateIndexToCharMap(defaultAlphabet);
         }
 
         private void ResultingMessageTextBox_Initialized(object sender, EventArgs e)
@@ -83,10 +84,62 @@ namespace CustomVigenereCypher
             return map;
         }
 
+        // plaintext = "I like trains"
+        // key = "asfd"
+        // neededKey = "asdfasdfasd"
+        // expectedResult = "I dlpe lufifv"
+        private static string ExtendKey(string key, int length)
+        {
+            if (key.Length >= length)
+            {
+                return key.Substring(0, length);
+            }
+
+            StringBuilder extendedKey = new StringBuilder();
+            int keyIndex = 0;
+
+            for (int i = 0; i < length; i++)
+            {
+                extendedKey.Append(key[keyIndex]);
+
+                keyIndex++;
+                if (keyIndex >= key.Length)
+                {
+                    keyIndex = 0;
+                }
+            }
+
+            return extendedKey.ToString();
+        }
+
         public static string Encrypt(string plaintext, string key)
         {
             string result = string.Empty;
+            int skippedSymbols = 0;
 
+            string extendedKey = ExtendKey(key, plaintext.Length);
+
+            for (int i = 0; i < plaintext.Length; i++)
+            {
+                char plainChar = plaintext[i];
+
+                if (charToIndex.ContainsKey(plainChar))
+                {
+                    int plainIndex = charToIndex[plainChar];
+                    int keyIndex = charToIndex[extendedKey[i - skippedSymbols]];
+
+                    int cipherIndex = (plainIndex + keyIndex) % alphabetLength;
+
+                    char cipherChar = indexToChar[cipherIndex];
+
+                    result += cipherChar;
+                }
+                else
+                {
+                    skippedSymbols++;
+                    result += plainChar;
+                }
+            }
 
             return result;
         }
