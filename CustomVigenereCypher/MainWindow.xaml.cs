@@ -147,6 +147,30 @@ namespace CustomVigenereCypher
         public static string Decrypt(string ciphertext, string key)
         {
             string result = string.Empty;
+            int skippedSymbols = 0;
+
+            string extendedKey = ExtendKey(key, ciphertext.Length);
+
+            for (int i = 0; i < ciphertext.Length; i++)
+            {
+                char cipherChar = ciphertext[i];
+
+                if (charToIndex.ContainsKey(cipherChar))
+                {
+                    int cipherIndex = charToIndex[cipherChar];
+                    int keyIndex = charToIndex[extendedKey[i - skippedSymbols]];
+
+                    int plainIndex = (cipherIndex - keyIndex + alphabetLength) % alphabetLength;
+                    char plainChar = indexToChar[plainIndex];
+
+                    result += plainChar;
+                }
+                else
+                {
+                    skippedSymbols++;
+                    result += cipherChar;
+                }
+            }
 
             return result;
         }
