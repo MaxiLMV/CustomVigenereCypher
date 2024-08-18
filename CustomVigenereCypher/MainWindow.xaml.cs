@@ -35,32 +35,33 @@ namespace CustomVigenereCypher
         private void SwapButton_Click(object sender, RoutedEventArgs e)
         {
             converterState = !converterState;
-            ConverterButton.Content = converterState ? "Encrypt" : "Decrypt";
 
             if (converterState)
             {
-                EnterMessageTextBox.Text = string.Empty;
-                EnterMessageTextBox.Watermark = "Enter your message here";
+                EnterMessageTextBox.Watermark = "Enter message to encrypt";
+                string key = string.IsNullOrEmpty(EnterCypherKeyTextBox.Text) ? defaultKey : EnterCypherKeyTextBox.Text;
+                EnterMessageTextBox.Text = ResultingMessageTextBox.Text;
+                ResultingMessageTextBox.Text = Encrypt(EnterMessageTextBox.Text, key);
             }
             else
             {
+                EnterMessageTextBox.Watermark = "Enter message to decrypt";
+                string key = string.IsNullOrEmpty(EnterCypherKeyTextBox.Text) ? defaultKey : EnterCypherKeyTextBox.Text;
                 EnterMessageTextBox.Text = ResultingMessageTextBox.Text;
+                ResultingMessageTextBox.Text = Decrypt(EnterMessageTextBox.Text, key);
             }
-
-            ResultingMessageTextBox.Text = string.Empty;
         }
 
-        private void ConverterButton_Click(object sender, RoutedEventArgs e)
+        private void EnterMessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (EnterMessageTextBox.Text == string.Empty)
-            {
-                EnterMessageTextBox.Watermark = "Please enter a message";
-                return;
-            }
             string key = string.IsNullOrEmpty(EnterCypherKeyTextBox.Text) ? defaultKey : EnterCypherKeyTextBox.Text;
             ResultingMessageTextBox.Text = converterState ? Encrypt(EnterMessageTextBox.Text, key) : Decrypt(EnterMessageTextBox.Text, key);
-            EnterMessageTextBox.Text = string.Empty;
             EnterMessageTextBox.Watermark = string.Empty;
+        }
+
+        private void EnterCypherKeyTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            EnterMessageTextBox_TextChanged(sender, e);
         }
 
         private Dictionary<char, int> CreateCharToIndexMap(string alphabet)
@@ -83,10 +84,6 @@ namespace CustomVigenereCypher
             return map;
         }
 
-        // plaintext = "I like trains"
-        // key = "asfd"
-        // neededKey = "asdfasdfasd"
-        // expectedResult = "I dlpe lufifv"
         private static string ExtendKey(string key, int length)
         {
             if (key.Length >= length)
@@ -173,5 +170,6 @@ namespace CustomVigenereCypher
 
             return result;
         }
+
     }
 }
