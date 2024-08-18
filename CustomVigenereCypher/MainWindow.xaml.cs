@@ -36,7 +36,6 @@ namespace CustomVigenereCypher
         {
             converterState = !converterState;
             ConverterButton.Content = converterState ? "Encrypt" : "Decrypt";
-            EnterMessageLabel.Content = converterState ? "MESSAGE TO ENCRYPT" : "MESSAGE TO DECRYPT";
 
             if (converterState)
             {
