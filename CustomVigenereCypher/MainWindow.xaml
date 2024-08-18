@@ -12,7 +12,7 @@
             <ColumnDefinition Width="542*"/>
             <ColumnDefinition Width="259*"/>
         </Grid.ColumnDefinitions>
-        <TextBox x:Name="ResultingMessageTextBox" BorderThickness="0" Margin="0,42,42,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="200" Initialized="ResultingMessageTextBox_Initialized" Cursor="IBeam" Background="White" Foreground="#BF323232" FontFamily="Dubai" Padding="5,5,5,5" FontSize="16" SelectionBrush="#FF0078D7" SelectionTextBrush="#FF0078D7" BorderBrush="{x:Null}" HorizontalAlignment="Right" Width="200" FontWeight="Bold" Grid.Column="1">
+        <TextBox x:Name="ResultingMessageTextBox" BorderThickness="0" Margin="0,42,42,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="200" Initialized="ResultingMessageTextBox_Initialized" Cursor="IBeam" Background="White" Foreground="#BF323232" FontFamily="Dubai" Padding="5,5,5,5" FontSize="14" SelectionBrush="#FF0078D7" SelectionTextBrush="#FF0078D7" BorderBrush="{x:Null}" HorizontalAlignment="Right" Width="200" FontWeight="Bold" Grid.Column="1">
             <TextBox.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="5"/>
