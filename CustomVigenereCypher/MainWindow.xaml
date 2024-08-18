@@ -19,7 +19,7 @@
                 </Style>
             </TextBox.Resources>
         </TextBox>
-        <Button x:Name="SwapButton" Content="Swap" HorizontalAlignment="Left" Margin="372,282,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="14" FontWeight="Bold" BorderBrush="Black" Foreground="White" Background="#FF3671B0" Padding="10" BorderThickness="0,0,0,0" Cursor="Hand" RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False" HorizontalContentAlignment="Center" MaxWidth="200" MaxHeight="50" Click="SwapButton_Click">
+        <Button x:Name="SwapButton" Content="Swap" HorizontalAlignment="Left" Margin="372,181,0,0" VerticalAlignment="Top" FontFamily="Arial" FontSize="14" FontWeight="Bold" BorderBrush="Black" Foreground="White" Background="#FF3671B0" Padding="10" BorderThickness="0,0,0,0" Cursor="Hand" RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False" HorizontalContentAlignment="Center" MaxWidth="200" MaxHeight="50" Click="SwapButton_Click">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
