@@ -1,3 +1,4 @@
-make encryption/decryption real time
-redesign UI into [message] -> [parameters (key, alphabet, etc.)] -> [result]
-					[swap button]
+1. add corner rouding for input text box
+2. add case sensitivity modes
+3. add option to Include or Ignore foreign chars
+4. add autokey cipher -> asdf[message]asdf (currenty implemented repeat key -> asdfasdfasdf)
