@@ -23,8 +23,9 @@ namespace CustomVigenereCypher
         public VigenereMain()
         {
             InitializeComponent();
-            charToIndex = CreateCharToIndexMap(defaultAlphabet);
-            indexToChar = CreateIndexToCharMap(defaultAlphabet);
+            EnterAplhabetTextBox.Text = defaultAlphabet;
+            EnterCypherKeyTextBox.Text = defaultKey;
+            FormMaps(EnterAplhabetTextBox.Text);
         }
 
         private void ResultingMessageTextBox_Initialized(object sender, EventArgs e)
@@ -56,12 +57,41 @@ namespace CustomVigenereCypher
         {
             string key = string.IsNullOrEmpty(EnterCypherKeyTextBox.Text) ? defaultKey : EnterCypherKeyTextBox.Text;
             ResultingMessageTextBox.Text = converterState ? Encrypt(EnterMessageTextBox.Text, key) : Decrypt(EnterMessageTextBox.Text, key);
-            EnterMessageTextBox.Watermark = string.Empty;
+        }
+
+        private void FormMaps(string alphabet)
+        {
+            charToIndex = CreateCharToIndexMap(alphabet);
+            indexToChar = CreateIndexToCharMap(alphabet);
         }
 
         private void EnterCypherKeyTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             EnterMessageTextBox_TextChanged(sender, e);
+        }
+
+
+        private void EnterAplhabetTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (CheckDuplicates(EnterAplhabetTextBox.Text)) return;
+            FormMaps(EnterAplhabetTextBox.Text);
+            EnterMessageTextBox_TextChanged(sender, e);
+        }
+
+        private bool CheckDuplicates(string alphabet)
+        {
+            HashSet<char> seenChars = new HashSet<char>();
+
+            foreach (char c in alphabet)
+            {
+                if (!seenChars.Add(c))
+                {
+                    DuplicatesWarningLabel.Visibility = Visibility.Visible;
+                    return true;
+                }  
+            }
+            DuplicatesWarningLabel.Visibility = Visibility.Hidden;
+            return false;
         }
 
         private Dictionary<char, int> CreateCharToIndexMap(string alphabet)
@@ -171,5 +201,24 @@ namespace CustomVigenereCypher
             return result;
         }
 
+        private void EnterAplhabetTextBox_Initialized(object sender, EventArgs e)
+        {
+            // 
+        }
+
+        private void EnterCypherKeyTextBox_Initialized(object sender, EventArgs e)
+        {
+            // 
+        }
+
+        private void EnterAplhabetTextBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            EnterAplhabetTextBox.ScrollToHorizontalOffset(0);
+        }
+
+        private void EnterCypherKeyTextBox_LostKeyboardFocus_1(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            EnterCypherKeyTextBox.ScrollToHorizontalOffset(0);
+        }
     }
 }
