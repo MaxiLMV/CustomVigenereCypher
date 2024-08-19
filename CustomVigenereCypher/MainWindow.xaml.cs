@@ -15,11 +15,14 @@ namespace CustomVigenereCypher
     {
         bool converterState = true;
         bool keyVariant = true; // True - Repeating, False - Autokey
+        bool includeForeign = true;
+
         static string defaultKey = "asdf";
         static string defaultAlphabet = "abcdefghijklmnopqrstuvwxyz";
+        static int alphabetLength = defaultAlphabet.Length;
+
         static Dictionary<char, int> charToIndex = new Dictionary<char, int>();
         static Dictionary<int, char> indexToChar = new Dictionary<int, char>();
-        static int alphabetLength = defaultAlphabet.Length;
 
         public VigenereMain()
         {
@@ -42,13 +45,13 @@ namespace CustomVigenereCypher
             {
                 string key = string.IsNullOrEmpty(EnterCypherKeyTextBox.Text) ? defaultKey : EnterCypherKeyTextBox.Text;
                 EnterMessageTextBox.Text = ResultingMessageTextBox.Text;
-                ResultingMessageTextBox.Text = Encrypt(EnterMessageTextBox.Text, key);
+                ResultingMessageTextBox.Text = Encrypt(EnterMessageTextBox.Text, key, includeForeign);
             }
             else
             {
                 string key = string.IsNullOrEmpty(EnterCypherKeyTextBox.Text) ? defaultKey : EnterCypherKeyTextBox.Text;
                 EnterMessageTextBox.Text = ResultingMessageTextBox.Text;
-                ResultingMessageTextBox.Text = Decrypt(EnterMessageTextBox.Text, key);
+                ResultingMessageTextBox.Text = Decrypt(EnterMessageTextBox.Text, key, includeForeign);
             }
         }
 
@@ -60,7 +63,7 @@ namespace CustomVigenereCypher
         private void UpdateResult()
         {
             string key = string.IsNullOrEmpty(EnterCypherKeyTextBox.Text) ? defaultKey : EnterCypherKeyTextBox.Text;
-            ResultingMessageTextBox.Text = converterState ? Encrypt(EnterMessageTextBox.Text, key) : Decrypt(EnterMessageTextBox.Text, key);
+            ResultingMessageTextBox.Text = converterState ? Encrypt(EnterMessageTextBox.Text, key, includeForeign) : Decrypt(EnterMessageTextBox.Text, key, includeForeign);
         }
 
         private void FormMaps(string alphabet)
@@ -71,7 +74,19 @@ namespace CustomVigenereCypher
 
         private void EnterCypherKeyTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (CheckForSmallKey(EnterCypherKeyTextBox.Text)) return;
             UpdateResult();
+        }
+
+        private bool CheckForSmallKey(string key)
+        {
+            if (key.Length < 2)
+            {
+                SmallKeyWarningLabel.Visibility = Visibility.Visible;
+                return true;
+            }
+            SmallKeyWarningLabel.Visibility = Visibility.Hidden;
+            return false;
         }
 
 
@@ -152,18 +167,30 @@ namespace CustomVigenereCypher
                 int textIndex = 0;
                 while (extendedKey.Length < length)
                 {
+                    if (textIndex >= text.Length)
+                    {
+                        break;
+                    }
+
                     if (text[textIndex] != ' ')
                     {
                         extendedKey.Append(text[textIndex]);
                     }
+
                     textIndex++;
                 }
 
-                return extendedKey.ToString().Substring(0, length);
+                while (extendedKey.Length < length)
+                {
+                    extendedKey.Append(extendedKey[extendedKey.Length % key.Length]);
+                }
+
+                return extendedKey.ToString();
             }
         }
 
-        private string Encrypt(string plaintext, string key)
+
+        private string Encrypt(string plaintext, string key, bool includeForeign = true)
         {
             string result = string.Empty;
             int skippedSymbols = 0;
@@ -188,14 +215,15 @@ namespace CustomVigenereCypher
                 else
                 {
                     skippedSymbols++;
-                    result += plainChar;
+                    if (includeForeign) result += plainChar;
+                    else continue;
                 }
             }
 
             return result;
         }
 
-        private string Decrypt(string ciphertext, string key)
+        private string Decrypt(string ciphertext, string key, bool includeForeign = true)
         {
             string result = string.Empty;
             int skippedSymbols = 0;
@@ -219,7 +247,8 @@ namespace CustomVigenereCypher
                 else
                 {
                     skippedSymbols++;
-                    result += cipherChar;
+                    if (includeForeign) result += cipherChar;
+                    else continue; 
                 }
             }
 
@@ -259,6 +288,22 @@ namespace CustomVigenereCypher
             AutokeyButton.IsEnabled = false;
             RepeatingKeyButton.IsEnabled = true;
             keyVariant = false;
+            UpdateResult();
+        }
+
+        private void IncludeForeignCharsButton_Click(object sender, RoutedEventArgs e)
+        {
+            IncludeForeignCharsButton.IsEnabled = false;
+            IgnoreForeignCharsButton.IsEnabled = true;
+            includeForeign = true;
+            UpdateResult();
+        }
+
+        private void IgnoreForeignCharsButton_Click(object sender, RoutedEventArgs e)
+        {
+            IgnoreForeignCharsButton.IsEnabled = false;
+            IncludeForeignCharsButton.IsEnabled = true;
+            includeForeign = false;
             UpdateResult();
         }
     }
