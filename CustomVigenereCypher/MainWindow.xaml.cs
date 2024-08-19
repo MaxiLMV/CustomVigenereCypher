@@ -14,6 +14,7 @@ namespace CustomVigenereCypher
     public partial class VigenereMain : Window
     {
         bool converterState = true;
+        bool keyVariant = true; // True - Repeating, False - Autokey
         static string defaultKey = "asdf";
         static string defaultAlphabet = "abcdefghijklmnopqrstuvwxyz";
         static Dictionary<char, int> charToIndex = new Dictionary<char, int>();
@@ -39,14 +40,12 @@ namespace CustomVigenereCypher
 
             if (converterState)
             {
-                EnterMessageTextBox.Watermark = "Enter message to encrypt";
                 string key = string.IsNullOrEmpty(EnterCypherKeyTextBox.Text) ? defaultKey : EnterCypherKeyTextBox.Text;
                 EnterMessageTextBox.Text = ResultingMessageTextBox.Text;
                 ResultingMessageTextBox.Text = Encrypt(EnterMessageTextBox.Text, key);
             }
             else
             {
-                EnterMessageTextBox.Watermark = "Enter message to decrypt";
                 string key = string.IsNullOrEmpty(EnterCypherKeyTextBox.Text) ? defaultKey : EnterCypherKeyTextBox.Text;
                 EnterMessageTextBox.Text = ResultingMessageTextBox.Text;
                 ResultingMessageTextBox.Text = Decrypt(EnterMessageTextBox.Text, key);
@@ -54,6 +53,11 @@ namespace CustomVigenereCypher
         }
 
         private void EnterMessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateResult();
+        }
+
+        private void UpdateResult()
         {
             string key = string.IsNullOrEmpty(EnterCypherKeyTextBox.Text) ? defaultKey : EnterCypherKeyTextBox.Text;
             ResultingMessageTextBox.Text = converterState ? Encrypt(EnterMessageTextBox.Text, key) : Decrypt(EnterMessageTextBox.Text, key);
@@ -67,7 +71,7 @@ namespace CustomVigenereCypher
 
         private void EnterCypherKeyTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            EnterMessageTextBox_TextChanged(sender, e);
+            UpdateResult();
         }
 
 
@@ -75,7 +79,7 @@ namespace CustomVigenereCypher
         {
             if (CheckDuplicates(EnterAplhabetTextBox.Text)) return;
             FormMaps(EnterAplhabetTextBox.Text);
-            EnterMessageTextBox_TextChanged(sender, e);
+            UpdateResult();
         }
 
         private bool CheckDuplicates(string alphabet)
@@ -114,36 +118,57 @@ namespace CustomVigenereCypher
             return map;
         }
 
-        private static string ExtendKey(string key, int length)
+        private static string ExtendKey(string key, string text, bool keyVariant = true)
         {
-            if (key.Length >= length)
+            int length = text.Length;
+
+            if (keyVariant)
             {
-                return key.Substring(0, length);
-            }
-
-            StringBuilder extendedKey = new StringBuilder();
-            int keyIndex = 0;
-
-            for (int i = 0; i < length; i++)
-            {
-                extendedKey.Append(key[keyIndex]);
-
-                keyIndex++;
-                if (keyIndex >= key.Length)
+                if (key.Length >= length)
                 {
-                    keyIndex = 0;
+                    return key.Substring(0, length);
                 }
-            }
 
-            return extendedKey.ToString();
+                StringBuilder extendedKey = new StringBuilder();
+                int keyIndex = 0;
+
+                for (int i = 0; i < length; i++)
+                {
+                    extendedKey.Append(key[keyIndex]);
+
+                    keyIndex++;
+                    if (keyIndex >= key.Length)
+                    {
+                        keyIndex = 0;
+                    }
+                }
+
+                return extendedKey.ToString();
+            }
+            else
+            {
+                StringBuilder extendedKey = new StringBuilder(key);
+
+                int textIndex = 0;
+                while (extendedKey.Length < length)
+                {
+                    if (text[textIndex] != ' ')
+                    {
+                        extendedKey.Append(text[textIndex]);
+                    }
+                    textIndex++;
+                }
+
+                return extendedKey.ToString().Substring(0, length);
+            }
         }
 
-        public static string Encrypt(string plaintext, string key)
+        private string Encrypt(string plaintext, string key)
         {
             string result = string.Empty;
             int skippedSymbols = 0;
 
-            string extendedKey = ExtendKey(key, plaintext.Length);
+            string extendedKey = ExtendKey(key, plaintext, keyVariant);
 
             for (int i = 0; i < plaintext.Length; i++)
             {
@@ -170,12 +195,12 @@ namespace CustomVigenereCypher
             return result;
         }
 
-        public static string Decrypt(string ciphertext, string key)
+        private string Decrypt(string ciphertext, string key)
         {
             string result = string.Empty;
             int skippedSymbols = 0;
 
-            string extendedKey = ExtendKey(key, ciphertext.Length);
+            string extendedKey = ExtendKey(key, ciphertext, keyVariant);
 
             for (int i = 0; i < ciphertext.Length; i++)
             {
@@ -219,6 +244,22 @@ namespace CustomVigenereCypher
         private void EnterCypherKeyTextBox_LostKeyboardFocus_1(object sender, KeyboardFocusChangedEventArgs e)
         {
             EnterCypherKeyTextBox.ScrollToHorizontalOffset(0);
+        }
+
+        private void RepeatingKeyButton_Click(object sender, RoutedEventArgs e)
+        {
+            RepeatingKeyButton.IsEnabled = false;
+            AutokeyButton.IsEnabled = true;
+            keyVariant = true;
+            UpdateResult();
+        }
+
+        private void AutokeyButton_Click(object sender, RoutedEventArgs e)
+        {
+            AutokeyButton.IsEnabled = false;
+            RepeatingKeyButton.IsEnabled = true;
+            keyVariant = false;
+            UpdateResult();
         }
     }
 }
