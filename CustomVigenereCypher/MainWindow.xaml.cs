@@ -165,25 +165,22 @@ namespace CustomVigenereCypher
             {
                 StringBuilder extendedKey = new StringBuilder(key);
 
+                text = text.ToLower();
                 int textIndex = 0;
+
                 while (extendedKey.Length < length)
                 {
-                    if (textIndex >= text.Length)
+                    if (textIndex >= length)
                     {
-                        break;
+                        textIndex = 0;
                     }
 
-                    if (text[textIndex] != ' ')
+                    if (charToIndex.ContainsKey(text[textIndex]))
                     {
                         extendedKey.Append(text[textIndex]);
                     }
 
                     textIndex++;
-                }
-
-                while (extendedKey.Length < length)
-                {
-                    extendedKey.Append(extendedKey[extendedKey.Length % key.Length]);
                 }
 
                 return extendedKey.ToString();
