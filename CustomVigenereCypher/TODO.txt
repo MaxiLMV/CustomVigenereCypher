@@ -1,4 +1,4 @@
 1. add corner rouding for input text box
 2. add case sensitivity modes
-3. add option to Include or Ignore foreign chars
-4. add autokey cipher -> asdf[message]asdf (currenty implemented repeat key -> asdfasdfasdf)
+3. identify problem when too many foreign characters
+4. tweak alphabets because only the base alphabet works correctly
