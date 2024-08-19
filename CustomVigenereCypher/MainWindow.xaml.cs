@@ -16,6 +16,7 @@ namespace CustomVigenereCypher
         bool converterState = true;
         bool keyVariant = true; // True - Repeating, False - Autokey
         bool includeForeign = true;
+        CaseSensitivityStateEnum caseState = CaseSensitivityStateEnum.Maintain;
 
         static string defaultKey = "asdf";
         static string defaultAlphabet = "abcdefghijklmnopqrstuvwxyz";
@@ -45,13 +46,13 @@ namespace CustomVigenereCypher
             {
                 string key = string.IsNullOrEmpty(EnterCypherKeyTextBox.Text) ? defaultKey : EnterCypherKeyTextBox.Text;
                 EnterMessageTextBox.Text = ResultingMessageTextBox.Text;
-                ResultingMessageTextBox.Text = Encrypt(EnterMessageTextBox.Text, key, includeForeign);
+                ResultingMessageTextBox.Text = Encrypt(EnterMessageTextBox.Text, key);
             }
             else
             {
                 string key = string.IsNullOrEmpty(EnterCypherKeyTextBox.Text) ? defaultKey : EnterCypherKeyTextBox.Text;
                 EnterMessageTextBox.Text = ResultingMessageTextBox.Text;
-                ResultingMessageTextBox.Text = Decrypt(EnterMessageTextBox.Text, key, includeForeign);
+                ResultingMessageTextBox.Text = Decrypt(EnterMessageTextBox.Text, key);
             }
         }
 
@@ -63,7 +64,7 @@ namespace CustomVigenereCypher
         private void UpdateResult()
         {
             string key = string.IsNullOrEmpty(EnterCypherKeyTextBox.Text) ? defaultKey : EnterCypherKeyTextBox.Text;
-            ResultingMessageTextBox.Text = converterState ? Encrypt(EnterMessageTextBox.Text, key, includeForeign) : Decrypt(EnterMessageTextBox.Text, key, includeForeign);
+            ResultingMessageTextBox.Text = converterState ? Encrypt(EnterMessageTextBox.Text, key) : Decrypt(EnterMessageTextBox.Text, key);
         }
 
         private void FormMaps(string alphabet)
@@ -133,7 +134,7 @@ namespace CustomVigenereCypher
             return map;
         }
 
-        private static string ExtendKey(string key, string text, bool keyVariant = true)
+        private string ExtendKey(string key, string text)
         {
             int length = text.Length;
 
@@ -190,16 +191,25 @@ namespace CustomVigenereCypher
         }
 
 
-        private string Encrypt(string plaintext, string key, bool includeForeign = true)
+        private string Encrypt(string plaintext, string key)
         {
             string result = string.Empty;
             int skippedSymbols = 0;
+            bool staysUpper = false;
 
-            string extendedKey = ExtendKey(key, plaintext, keyVariant);
+            string extendedKey = ExtendKey(key, plaintext);
 
             for (int i = 0; i < plaintext.Length; i++)
             {
                 char plainChar = plaintext[i];
+
+                if (caseState == CaseSensitivityStateEnum.Maintain && char.IsUpper(plainChar))
+                {
+                    plainChar = char.ToLower(plainChar);
+                    staysUpper = true;
+                }
+
+                if (caseState == CaseSensitivityStateEnum.Lowercase) plainChar = char.ToLower(plainChar);
 
                 if (charToIndex.ContainsKey(plainChar))
                 {
@@ -207,8 +217,13 @@ namespace CustomVigenereCypher
                     int keyIndex = charToIndex[extendedKey[i - skippedSymbols]];
 
                     int cipherIndex = (plainIndex + keyIndex) % alphabetLength;
-
                     char cipherChar = indexToChar[cipherIndex];
+
+                    if (staysUpper)
+                    {
+                        staysUpper = false;
+                        cipherChar = char.ToUpper(cipherChar);
+                    }
 
                     result += cipherChar;
                 }
@@ -223,16 +238,25 @@ namespace CustomVigenereCypher
             return result;
         }
 
-        private string Decrypt(string ciphertext, string key, bool includeForeign = true)
+        private string Decrypt(string ciphertext, string key)
         {
             string result = string.Empty;
             int skippedSymbols = 0;
+            bool staysUpper = false;
 
-            string extendedKey = ExtendKey(key, ciphertext, keyVariant);
+            string extendedKey = ExtendKey(key, ciphertext);
 
             for (int i = 0; i < ciphertext.Length; i++)
             {
                 char cipherChar = ciphertext[i];
+
+                if (caseState == CaseSensitivityStateEnum.Maintain && char.IsUpper(cipherChar))
+                {
+                    cipherChar = char.ToLower(cipherChar);
+                    staysUpper = true;
+                }
+
+                if (caseState == CaseSensitivityStateEnum.Lowercase) cipherChar = char.ToLower(cipherChar);
 
                 if (charToIndex.ContainsKey(cipherChar))
                 {
@@ -241,6 +265,12 @@ namespace CustomVigenereCypher
 
                     int plainIndex = (cipherIndex - keyIndex + alphabetLength) % alphabetLength;
                     char plainChar = indexToChar[plainIndex];
+
+                    if (staysUpper)
+                    {
+                        staysUpper = false;
+                        plainChar = char.ToUpper(plainChar);
+                    }
 
                     result += plainChar;
                 }
@@ -253,16 +283,6 @@ namespace CustomVigenereCypher
             }
 
             return result;
-        }
-
-        private void EnterAplhabetTextBox_Initialized(object sender, EventArgs e)
-        {
-            // 
-        }
-
-        private void EnterCypherKeyTextBox_Initialized(object sender, EventArgs e)
-        {
-            // 
         }
 
         private void EnterAplhabetTextBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
@@ -304,6 +324,33 @@ namespace CustomVigenereCypher
             IgnoreForeignCharsButton.IsEnabled = false;
             IncludeForeignCharsButton.IsEnabled = true;
             includeForeign = false;
+            UpdateResult();
+        }
+
+        private void MaintainCaseButton_Click(object sender, RoutedEventArgs e)
+        {
+            MaintainCaseButton.IsEnabled = false;
+            AllLowercaseButton.IsEnabled = true;
+            StrictCaseButton.IsEnabled = true;
+            caseState = CaseSensitivityStateEnum.Maintain;
+            UpdateResult();
+        }
+
+        private void AllLowercaseButton_Click(object sender, RoutedEventArgs e)
+        {
+            AllLowercaseButton.IsEnabled = false;
+            StrictCaseButton.IsEnabled = true;
+            MaintainCaseButton.IsEnabled = true;
+            caseState = CaseSensitivityStateEnum.Lowercase;
+            UpdateResult();
+        }
+
+        private void StrictCaseButton_Click(object sender, RoutedEventArgs e)
+        {
+            StrictCaseButton.IsEnabled = false;
+            MaintainCaseButton.IsEnabled = true;
+            AllLowercaseButton.IsEnabled = true;
+            caseState = CaseSensitivityStateEnum.Strict;
             UpdateResult();
         }
     }

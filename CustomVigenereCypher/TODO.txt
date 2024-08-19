@@ -1,4 +1,2 @@
-1. add corner rouding for input text box
-2. add case sensitivity modes
-3. identify problem when too many foreign characters
-4. tweak alphabets because only the base alphabet works correctly
+1. identify problem when too many foreign characters - has something to do with switching to Autokey while having a message with non-ignored foreign symbols
+2. tweak alphabets because only the base alphabet works correctly
