@@ -1,1 +1,2 @@
-1. fix autokey decriptor
+1. find a way to remove the if condition in the ExtendKey function
+2. Testing
