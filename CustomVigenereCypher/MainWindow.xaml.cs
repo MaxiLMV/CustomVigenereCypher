@@ -161,7 +161,7 @@ namespace CustomVigenereCypher
 
                 return extendedKey.ToString();
             }
-            else
+            else // For some reason removing this breaks Autokey, even though it should be redundant and never reached.
             {
                 StringBuilder extendedKey = new StringBuilder(key);
 
@@ -195,6 +195,7 @@ namespace CustomVigenereCypher
             bool staysUpper = false;
 
             string extendedKey = ExtendKey(key, plaintext);
+            if (caseState == CaseSensitivityStateEnum.Lowercase) plaintext = plaintext.ToLower();
 
             for (int i = 0; i < plaintext.Length; i++)
             {
@@ -205,8 +206,6 @@ namespace CustomVigenereCypher
                     plainChar = char.ToLower(plainChar);
                     staysUpper = true;
                 }
-
-                if (caseState == CaseSensitivityStateEnum.Lowercase) plainChar = char.ToLower(plainChar);
 
                 if (charToIndex.ContainsKey(plainChar))
                 {
@@ -228,7 +227,6 @@ namespace CustomVigenereCypher
                 {
                     skippedSymbols++;
                     if (includeForeign) result += plainChar;
-                    else continue;
                 }
             }
 
@@ -240,8 +238,10 @@ namespace CustomVigenereCypher
             string result = string.Empty;
             int skippedSymbols = 0;
             bool staysUpper = false;
+            string extendedKey = key;
 
-            string extendedKey = ExtendKey(key, ciphertext);
+            if (keyVariant) extendedKey = ExtendKey(key, ciphertext);
+            if (caseState == CaseSensitivityStateEnum.Lowercase) ciphertext = ciphertext.ToLower();
 
             for (int i = 0; i < ciphertext.Length; i++)
             {
@@ -253,8 +253,6 @@ namespace CustomVigenereCypher
                     staysUpper = true;
                 }
 
-                if (caseState == CaseSensitivityStateEnum.Lowercase) cipherChar = char.ToLower(cipherChar);
-
                 if (charToIndex.ContainsKey(cipherChar))
                 {
                     int cipherIndex = charToIndex[cipherChar];
@@ -262,6 +260,8 @@ namespace CustomVigenereCypher
 
                     int plainIndex = (cipherIndex - keyIndex + alphabetLength) % alphabetLength;
                     char plainChar = indexToChar[plainIndex];
+
+                    if (!keyVariant) extendedKey += plainChar;
 
                     if (staysUpper)
                     {
@@ -275,7 +275,6 @@ namespace CustomVigenereCypher
                 {
                     skippedSymbols++;
                     if (includeForeign) result += cipherChar;
-                    else continue; 
                 }
             }
 
